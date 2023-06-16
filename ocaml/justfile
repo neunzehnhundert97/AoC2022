@@ -1,0 +1,5 @@
+build:
+    dune build
+
+run DAY: build
+    dune exec ./day{{DAY}}.exe
