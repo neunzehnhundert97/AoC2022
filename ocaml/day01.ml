@@ -24,8 +24,22 @@ let max list =
     | head :: tail -> inner (if acc > head then acc else head) tail in
   inner 0 list
 
+let solution1 data =
+  data |> group_chunks |> max
+
+let solution2 data =
+  let sorted_data = data |> group_chunks |> List.sort Int.compare |> List.rev in
+  match sorted_data with 
+  | a :: b :: c :: _ -> a+b+c
+  | _ -> failwith "The list is not long enough"
+
+
 let _ =
-  print_endline "== Day 01 ==";
   let data = read_file file in
-    data |> group_chunks |> max |> print_int;
-  print_string "\n";
+    print_endline "== Day 01 ==";
+    print_endline "Solution 1";
+    data |> solution1 |> print_int;
+    print_string "\n";
+    print_endline "Solution 2";
+    data |> solution2 |> print_int;
+    print_string "\n";
