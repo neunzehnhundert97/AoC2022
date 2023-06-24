@@ -1,17 +1,11 @@
-
 let file = if true then "input01.data" else "example01.data"
 
-(** Read all content of a given [filename]. *)
-let read_file filename =
-  In_channel.(with_open_text filename input_all) |> (Str.split (Str.regexp "\n"))
-
-  
 (** Group the chunks and sum them up. *)
-let group_chunks (lines: string list) =
+let group_chunks (lines : string list) =
   let rec inner lines current acc =
     match lines with
     | [] -> acc
-    | head :: tail when head = "" -> inner tail 0 (acc @ [current])
+    | head :: tail when head = "" -> inner tail 0 (acc @ [ current ])
     | head :: tail -> inner tail (int_of_string head + current) acc
   in
 
@@ -21,25 +15,24 @@ let group_chunks (lines: string list) =
 let max list =
   let rec inner acc = function
     | [] -> acc
-    | head :: tail -> inner (if acc > head then acc else head) tail in
+    | head :: tail -> inner (if acc > head then acc else head) tail
+  in
   inner 0 list
 
-let solution1 data =
-  data |> group_chunks |> max
+let solution1 data = data |> group_chunks |> max
 
 let solution2 data =
   let sorted_data = data |> group_chunks |> List.sort Int.compare |> List.rev in
-  match sorted_data with 
-  | a :: b :: c :: _ -> a+b+c
+  match sorted_data with
+  | a :: b :: c :: _ -> a + b + c
   | _ -> failwith "The list is not long enough"
 
-
 let _ =
-  let data = read_file file in
-    print_endline "== Day 01 ==";
-    print_endline "Solution 1";
-    data |> solution1 |> print_int;
-    print_string "\n";
-    print_endline "Solution 2";
-    data |> solution2 |> print_int;
-    print_string "\n";
+  let data = Shared.read_file file in
+  print_endline "== Day 01 ==";
+  print_endline "Solution 1";
+  data |> solution1 |> print_int;
+  print_string "\n";
+  print_endline "Solution 2";
+  data |> solution2 |> print_int;
+  print_string "\n"
