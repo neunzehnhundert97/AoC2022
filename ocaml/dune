@@ -1,9 +1,18 @@
+(library
+ (modules shared)
+ (name shared))
+
 (executable
  (name day01)
  (modules day01)
- (libraries str))
+ (libraries str shared))
 
 (executable
  (name day02)
  (modules day02)
- (libraries str))
+ (libraries str shared))
+
+(env
+ (dev
+  (flags
+   (:standard -w -26 -w -32))))
