@@ -1,6 +1,9 @@
 (** Read all content of a given [filename] and return a list of lines. *)
-let read_file filename =
+let read_file_to_string_list filename =
   In_channel.(with_open_text filename input_all) |> Str.split (Str.regexp "\n")
+
+let read_file_to_string filename =
+  In_channel.(with_open_text filename input_all)
 
 (** Print a list of strings.*)
 let print_string_list list = List.iter print_string list
