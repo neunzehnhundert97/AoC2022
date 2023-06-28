@@ -33,11 +33,11 @@ let solution2_alt filename =
     |> Str.split (Str.regexp "\n\n")
     |> List.map
          (Str.split $ Str.regexp "\n" >> List.map int_of_string
-        >> List.fold_left ( + ) 0))
-  |> List.sort Int.compare |> List.rev
-  |> function
-  | a :: b :: c :: _ -> a + b + c
-  | _ -> failwith "list to short"
+        >> List.fold_left ( + ) 0)
+    |> List.sort Int.compare |> List.rev
+    |> function
+    | a :: b :: c :: _ -> a + b + c
+    | _ -> failwith "list to short")
 
 let _ =
   let data = Shared.read_file_to_string_list file in
