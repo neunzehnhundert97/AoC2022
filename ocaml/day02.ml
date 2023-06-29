@@ -58,7 +58,7 @@ let solve2 lines =
   lines |> List.map (parse_round2 >> eval_round) |> List.fold_left ( + ) 0
 
 let _ =
-  let data = read_file file in
+  let data = read_file_to_string_list file in
   print_endline "Part 1";
   data |> solve1 |> Printf.printf "%d\n";
   print_endline "Part 2";

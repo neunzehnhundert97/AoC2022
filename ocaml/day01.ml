@@ -27,12 +27,26 @@ let solution2 data =
   | a :: b :: c :: _ -> a + b + c
   | _ -> failwith "The list is not long enough"
 
+let solution2_alt filename =
+  Shared.(
+    filename |> read_file_to_string
+    |> Str.split (Str.regexp "\n\n")
+    |> List.map
+         (Str.split $ Str.regexp "\n" >> List.map int_of_string
+        >> List.fold_left ( + ) 0))
+  |> List.sort Int.compare |> List.rev
+  |> function
+  | a :: b :: c :: _ -> a + b + c
+  | _ -> failwith "list to short"
+
 let _ =
-  let data = Shared.read_file file in
+  let data = Shared.read_file_to_string_list file in
   print_endline "== Day 01 ==";
   print_endline "Solution 1";
   data |> solution1 |> print_int;
   print_string "\n";
   print_endline "Solution 2";
   data |> solution2 |> print_int;
-  print_string "\n"
+  print_string "\n";
+  print_string "\n";
+  file |> solution2_alt |> Printf.printf "%d\n"
