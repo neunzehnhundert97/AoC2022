@@ -19,12 +19,34 @@ let print_stack index stack =
 let print_stacks = List.iteri print_stack
 let first_pair_option = function a :: b :: _ -> Some (a, b) | _ -> None
 let bimap_tuple func1 func2 (a, b) = (func1 a, func2 b)
+let drop = function _ :: rest -> rest | _ -> []
+
+let parse_stack_line line =
+  let filter_func (index, _) = (index - 1) mod 4 = 0 in
+
+  line |> String.to_seqi |> Seq.filter filter_func |> Seq.map snd |> List.of_seq
+
+let rotate_matrix (matrix : 'a list list) =
+  print_stacks matrix;
+  print_endline "-------";
+  let rec outer matrix acc =
+    match matrix with [] -> acc | a :: rest -> outer rest (inner a acc [])
+  and inner list acc acc_done =
+    match (list, acc) with
+    | [], _ -> acc_done
+    | a :: rest, b :: acc_rest ->
+        (* Printf.printf ";'%c' to %s" a (String.of_seq (List.to_seq b)); *)
+        inner rest acc_rest (acc_done @ [ b @ [ a ] ])
+    | a :: rest, [] ->
+        (* Printf.printf ";\"%c\" " a; *)
+        inner rest [] (acc_done @ [ [ a ] ])
+  in
+  outer matrix []
 
 let parse_initial_stack input =
   print_endline "Intial stack";
-  print_string input;
-  print_endline input;
-  [ [ 'a'; 'c' ]; [ 'd'; 'e' ] ]
+  input |> Str.split newline_regex |> List.rev |> drop
+  |> List.map parse_stack_line |> rotate_matrix
 
 let instruction_regex =
   let number_group = Re.group (Re.rep1 Re.digit) in
@@ -55,9 +77,7 @@ let string_to_instruction line =
 
 let parse_instructions input =
   print_endline "Orders";
-  input |> Str.split newline_regex
-  |> List.map string_to_instruction
-  |> List.map Option.to_list |> List.flatten
+  input |> Str.split newline_regex |> List.filter_map string_to_instruction
 
 let parse_input input =
   input |> Str.split empty_line_regex |> first_pair_option
