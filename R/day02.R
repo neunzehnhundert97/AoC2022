@@ -1,4 +1,6 @@
 setwd("~/Dokumente/Coding/AoC2022/R")
+library(readr)
+library(stringr)
 
 raw <- read_file("day02_example.data")
 raw <- read_file("day02.data")
