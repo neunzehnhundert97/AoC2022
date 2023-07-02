@@ -7,15 +7,6 @@ let print_char_set char_set =
   CharSet.iter (Printf.printf "'%c',") char_set;
   print_endline "}"
 
-let test_and_do solve print test_value =
-  let example_file = Printf.sprintf "example%02d.data" day in
-  let data_file = Printf.sprintf "input%02d.data" day in
-  let example_data = Shared.read_file_to_string example_file in
-  let data = Shared.read_file_to_string data_file in
-  if solve example_data = test_value then Printf.printf "Test succeeded\n"
-  else failwith "Test failed";
-  data |> solve |> print
-
 let find_begin_of_thing amount_same input =
   let is_alpha c = c >= 'a' && c <= 'z' in
 
@@ -47,6 +38,4 @@ let solve1 = find_begin_of_thing 4
 let solve2 = find_begin_of_thing 14
 
 let _ =
-  print_endline "Day 6";
-  test_and_do solve1 (Printf.printf "Solution 1: %d\n") 11;
-  test_and_do solve2 (Printf.printf "Solution 2: %d\n") 26
+  Shared.do_day 6 solve1 solve2 Shared.read_file_to_string string_of_int 11 26

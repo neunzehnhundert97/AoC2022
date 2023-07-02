@@ -36,6 +36,20 @@ let inspect func x =
   func x;
   x
 
+let test_and_do day solve read to_string test_value =
+  let example_file = Printf.sprintf "example%02d.data" day in
+  let data_file = Printf.sprintf "input%02d.data" day in
+  let example_data = read example_file in
+  let data = read data_file in
+  if solve example_data = test_value then Printf.printf "Test succeeded\n"
+  else failwith "Test failed";
+  data |> solve |> to_string
+
+let do_day day solve1 solve2 read to_string test1 test2 =
+  Printf.printf "Day %d\n" day;
+  Printf.printf "Solution 1: %s\n" (test_and_do day solve1 read to_string test1);
+  Printf.printf "Solution 2: %s\n" (test_and_do day solve2 read to_string test2)
+
 (** Print a list of strings.*)
 let print_string_list list = List.iter print_string list
 
