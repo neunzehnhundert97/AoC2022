@@ -32,7 +32,12 @@
  (modules day06)
  (libraries str shared re))
 
+(executable
+ (name day07)
+ (modules day07)
+ (libraries str shared re))
+
 (env
  (dev
   (flags ; ignore warnings about unused functions and values
-   (:standard -w -26 -w -32))))
+   (:standard -w -26 -w -32 -w -34 -w -37))))

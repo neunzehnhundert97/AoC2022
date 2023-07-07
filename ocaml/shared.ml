@@ -24,6 +24,8 @@ let take_and_remainder n (list : 'a list) =
   if n > 0 then inner list n [] else ([], list)
 
 let take n list = fst (take_and_remainder n list)
+let sum = List.fold_left ( + ) 0
+let string_concat = List.fold_left ( ^ ) ""
 
 (** Apply the side effect [func] to each element of [list] and return it
     unchanged. *)
@@ -58,3 +60,6 @@ let ( $ ) f x = f x
 
 (** And then operator.*)
 let ( >> ) f g x = g (f x)
+
+(** Returns the identity of [x], which is x. *)
+let identity x = x
