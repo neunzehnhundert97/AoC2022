@@ -98,11 +98,6 @@ let process_commands commands =
       trees
       |> List.find_map (function
            | Directory (n, c) when n = name -> Some c
-           (* | Directory (n, _) when n != name ->
-               Printf.printf "%s != %s\n"
-                 (Shared.string_concat name)
-                 (Shared.string_concat n);
-               None *)
            | _ -> None)
       |> Option.get
     in
@@ -141,26 +136,25 @@ let solve1 input =
     tree |> size_of_tree |> List.sort (fun (_, s1) (_, s2) -> Int.compare s1 s2)
   in
 
-  (* tree |> tree_to_string |> print_endline; *)
   dir_sizes
   |> List.filter (fun (_, s) -> s <= 100000)
-  (* |> Shared.tap print_tuple *)
-  |> List.map snd
-  |> Shared.sum
+  |> List.map snd |> Shared.sum
 
-let solve2 input = List.length input
+let solve2 input =
+  let tree = input |> List.map parse_command |> process_commands in
+  let dir_sizes =
+    tree |> size_of_tree |> List.sort (fun (_, s1) (_, s2) -> Int.compare s1 s2)
+  in
 
-(* let _ =
-   let i = File ("i", 584) in
-   let f = File ("f", 29116) in
-   let g = File ("g", 2557) in
-   let h = File ("h", 62596) in
-   let e = Directory ([ "e" ], [ i ]) in
-   let a = Directory ([ "a" ], [ e; f; g; h ]) in
+  let used_space = dir_sizes |> List.rev |> List.hd |> snd in
+  let total_space = 70000000 in
+  let needed_space = 30000000 in
 
-   a |> tree_to_string |> print_endline;
-   a |> size_of_tree |> List.iter print_tuple *)
+  dir_sizes
+  |> List.find (fun (_, size) ->
+         total_space - used_space - needed_space + size > 0)
+  |> snd
 
 let _ =
   Shared.do_day 7 solve1 solve2 Shared.read_file_to_string_list string_of_int
-    95437 1
+    95437 24933642
