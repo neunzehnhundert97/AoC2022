@@ -68,7 +68,7 @@ let add_path paths segment =
   | [ "/" ], seg -> seg :: [ "/" ]
   | ls, seg -> seg :: "/" :: ls
 
-let process_commands commands =
+let build_tree commands =
   let rec pre_group dir contents res commands =
     let append = add_path dir in
     match commands with
@@ -129,22 +129,19 @@ let process_commands commands =
   fold_tree (List.hd pre_tree) (List.tl pre_tree)
 
 let print_tuple (x, y) = Printf.printf "%s: %d\n" x y
+let sort_sizes = List.sort (fun (_, s1) (_, s2) -> Int.compare s1 s2)
 
 let solve1 input =
-  let tree = input |> List.map parse_command |> process_commands in
-  let dir_sizes =
-    tree |> size_of_tree |> List.sort (fun (_, s1) (_, s2) -> Int.compare s1 s2)
-  in
+  let tree = input |> List.map parse_command |> build_tree in
+  let dir_sizes = tree |> size_of_tree |> sort_sizes in
 
   dir_sizes
   |> List.filter (fun (_, s) -> s <= 100000)
   |> List.map snd |> Shared.sum
 
 let solve2 input =
-  let tree = input |> List.map parse_command |> process_commands in
-  let dir_sizes =
-    tree |> size_of_tree |> List.sort (fun (_, s1) (_, s2) -> Int.compare s1 s2)
-  in
+  let tree = input |> List.map parse_command |> build_tree in
+  let dir_sizes = tree |> size_of_tree |> sort_sizes in
 
   let used_space = dir_sizes |> List.rev |> List.hd |> snd in
   let total_space = 70000000 in
