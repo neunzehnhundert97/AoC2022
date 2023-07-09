@@ -30,17 +30,17 @@
 (executable
  (name day06)
  (modules day06)
- (libraries str shared re))
+ (libraries str shared))
 
 (executable
  (name day07)
  (modules day07)
- (libraries str shared re))
+ (libraries str shared))
 
 (executable
  (name day08)
  (modules day08)
- (libraries str shared re))
+ (libraries str shared))
 
 (env
  (dev
