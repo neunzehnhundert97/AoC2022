@@ -62,7 +62,11 @@ let move_to_touch head tail =
   | (x1, yh), (xt, yt) ->
       ((if xt > x1 then xt - 1 else xt + 1), if yt > yh then yt - 1 else yt + 1)
 
-let apply_direction (x, y) = function
+let move_if_needed head tail =
+  if touching head tail then tail else move_to_touch head tail
+
+let apply_direction direction (x, y) =
+  match direction with
   | Right -> (x + 1, y)
   | Left -> (x - 1, y)
   | Up -> (x, y + 1)
@@ -78,25 +82,36 @@ let parse_input =
   in
   List.map parse_line
 
+(** Like [List.fold_left] but return the intermediate results.
+      Attention: Output is revered. *)
+let scan func initial =
+  let rec inner current res = function
+    | [] -> res
+    | x :: xs ->
+        let e = func current x in
+        inner e (e :: res) xs
+  in
+  inner initial []
+
 (** Simulate the movement of the rope given a list of [commands] as
     tuples of (direction, steps). *)
-let simulate_rope commands =
+let simulate_rope knot_number commands =
   (* Move the head and make the fail follow. *)
-  let rec do_step head tail history = function
-    | _, 0 -> (head, tail, history)
+  let rec do_step knots history = function
+    | _, 0 -> (knots, history)
     | direction, step ->
-        let moved_head = apply_direction head direction in
-        let moved_tail =
-          if touching moved_head tail then tail
-          else move_to_touch moved_head tail
+        let moved_head = knots |> List.hd |> apply_direction direction in
+        let moved_knots =
+          moved_head
+          :: (knots |> List.tl |> scan move_if_needed moved_head |> List.rev)
         in
-        (* Printf.printf "H: %s T: %s\n"
-           (Index.to_string moved_head)
-           (Index.to_string moved_tail); *)
-        (* render 500 moved_head moved_tail; *)
-        if not (touching moved_head moved_tail) then failwith "!";
-        do_step moved_head moved_tail (moved_tail :: history)
-          (direction, step - 1)
+
+        (* moved_knots |> List.map Index.to_string |> print_string_list;
+
+           Printf.printf "H: %s T: %s\n"
+             (Index.to_string moved_head)
+             (Index.to_string (last moved_knots)); *)
+        do_step moved_knots (last moved_knots :: history) (direction, step - 1)
   in
 
   (* Process each command at at time.
@@ -104,37 +119,22 @@ let simulate_rope commands =
       [tail] is a tuple of the head's current position.
       [tail] is a list of tuples of the head's past positions.
       The [history] is returned at the end. *)
-  let rec simulate head tail history = function
+  let rec simulate knots history = function
     | [] -> List.flatten history
     | command :: rest ->
-        let moved_head, moved_tail, hist = do_step head tail [] command in
-        simulate moved_head moved_tail (hist :: history) rest
+        let moved_knots, hist = do_step knots [] command in
+        simulate moved_knots (hist :: history) rest
   in
 
   (* Printf.printf "H: %s T: %s\n"
      (Index.to_string (0, 0))
      (Index.to_string (0, 0)); *)
+  let start_pos = (0, 0) in
+
   commands
-  |> simulate (0, 0) (0, 0) [ [ (0, 0) ] ]
-  (* |> tap Index.print *)
-  |> IndexSet.of_list
-  |> inspect print_index_set |> IndexSet.cardinal
+  |> simulate (List.init knot_number (const start_pos)) [ [ start_pos ] ]
+  |> IndexSet.of_list |> IndexSet.cardinal
 
-let solve1 lines = lines |> parse_input |> simulate_rope
-let solve2 lines = List.length lines
-let _ = do_day 09 solve1 solve2 read_file_to_string_list string_of_int 13 0
-
-(* let _ =
-   let grid = Index.flat_init 5 5 in
-   let head = (2, 2) in
-
-   grid
-   |> List.map (fun tail ->
-          (tail, if touching tail head then tail else move_to_touch head tail))
-   |> List.iter (fun (old_t, new_t) ->
-          print_endline "-------------";
-          render 5 head old_t;
-          print_endline "\nBecomes\n";
-          render 5 head new_t);
-
-   print_endline "" *)
+let solve1 lines = lines |> parse_input |> simulate_rope 2
+let solve2 lines = lines |> parse_input |> simulate_rope 10
+let _ = do_day 09 solve1 solve2 read_file_to_string_list string_of_int 13 1

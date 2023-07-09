@@ -79,3 +79,10 @@ let ( >> ) f g x = g (f x)
 
 (** Returns the identity of [x], which is x. *)
 let identity x = x
+
+let const x _ = x
+
+let rec last = function
+  | [ x ] -> x
+  | _ :: xs -> last xs
+  | _ -> failwith "Empty list"
