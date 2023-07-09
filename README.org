@@ -1,0 +1,6 @@
+* AoC2022
+Solutions to the [[https://adventofcode.com/2022][2022 Advent of Coding]] (although not done in winter).
+
+- OCaml :: [[https://github.com/neunzehnhundert97][neunzehnhundert97]]
+- Python :: [[https://github.com/VirabG][VirabG]]
+- R :: [[https://github.com/Zahlenfolge][Zahlenfolge]]
