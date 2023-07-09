@@ -52,19 +52,20 @@ let test_and_do day solve read to_string test_value =
     Printf.printf "Test succeeded\n";
     data |> solve |> to_string |> Either.right)
 
+(** Main function to run a day of the advent. Given the day. *)
 let do_day day solve1 solve2 read to_string test1 test2 =
   Printf.printf "Day %d\n" day;
   let _ =
     match test_and_do day solve1 read to_string test1 with
     | Either.Right value -> Printf.printf "Solution 1: %s\n" value
     | Either.Left s ->
-        print_string s;
+        print_endline s;
         exit 1
   in
   match test_and_do day solve2 read to_string test2 with
   | Either.Right value -> Printf.printf "Solution 2: %s\n" value
   | Either.Left s ->
-      print_string s;
+      print_endline s;
       exit 1
 
 (** Print a list of strings.*)
