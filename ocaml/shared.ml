@@ -43,14 +43,29 @@ let test_and_do day solve read to_string test_value =
   let data_file = Printf.sprintf "input%02d.data" day in
   let example_data = read example_file in
   let data = read data_file in
-  if solve example_data = test_value then Printf.printf "Test succeeded\n"
-  else failwith "Test failed";
-  data |> solve |> to_string
+  let example_result = solve example_data in
+  if example_result != test_value then
+    Either.left
+      (Printf.sprintf "Test failed, expected %s, but got %s"
+         (to_string test_value) (to_string example_result))
+  else (
+    Printf.printf "Test succeeded\n";
+    data |> solve |> to_string |> Either.right)
 
 let do_day day solve1 solve2 read to_string test1 test2 =
   Printf.printf "Day %d\n" day;
-  Printf.printf "Solution 1: %s\n" (test_and_do day solve1 read to_string test1);
-  Printf.printf "Solution 2: %s\n" (test_and_do day solve2 read to_string test2)
+  let _ =
+    match test_and_do day solve1 read to_string test1 with
+    | Either.Right value -> Printf.printf "Solution 1: %s\n" value
+    | Either.Left s ->
+        print_string s;
+        exit 1
+  in
+  match test_and_do day solve2 read to_string test2 with
+  | Either.Right value -> Printf.printf "Solution 2: %s\n" value
+  | Either.Left s ->
+      print_string s;
+      exit 1
 
 (** Print a list of strings.*)
 let print_string_list list = List.iter print_string list
