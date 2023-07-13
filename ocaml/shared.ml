@@ -69,7 +69,10 @@ let do_day day solve1 solve2 read to_string test1 test2 =
       exit 1
 
 (** Print a list of strings.*)
-let print_string_list list = List.iter print_string list
+let print_string_list list =
+  print_string " [ ";
+  List.iter (fun x -> Printf.printf "'%s', " x) list;
+  print_endline " ]"
 
 (** Function application with lower priority to get around parens. *)
 let ( $ ) f x = f x
@@ -86,3 +89,16 @@ let rec last = function
   | [ x ] -> x
   | _ :: xs -> last xs
   | _ -> failwith "Empty list"
+
+module Index = struct
+  type t = int * int
+
+  let compare (x1, y1) (x2, y2) =
+    let x_comp = Int.compare x1 x2 in
+    if x_comp != 0 then x_comp else Int.compare y1 y2
+
+  let init a b = List.init a (fun x -> List.init b (fun y -> (x, y)))
+  let flat_init a b = init a b |> List.flatten
+  let to_string (x, y) = Printf.sprintf "(%d, %d) " x y
+  let print index = index |> to_string |> print_string
+end
