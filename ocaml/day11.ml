@@ -8,7 +8,7 @@ type monkey = {
   index : int;
   start_items : int list;
   operation : int -> int;
-  test : int -> bool;
+  test_value : int;
   true_dest : int;
   false_dest : int;
 }
@@ -40,9 +40,7 @@ let parse_monkey input =
   in
 
   let parse_test line =
-    line
-    |> Str.split (Str.regexp "divisible by ")
-    |> nth 1 |> int_of_string |> is_divisible
+    line |> Str.split (Str.regexp "divisible by ") |> nth 1 |> int_of_string
   in
 
   let parse_dest line =
@@ -56,20 +54,28 @@ let parse_monkey input =
         index = parse_index index;
         start_items = parse_items starting;
         operation = parse_operation operation;
-        test = parse_test test;
+        test_value = parse_test test;
         true_dest = parse_dest if_true;
         false_dest = parse_dest if_false;
       }
   | _ -> failwith "invalid monkey"
 
-let simulate_monkeys rounds monkeys =
+let simulate_monkeys rounds divisor monkeys =
+  let least_common_multiple =
+    monkeys |> List.map (fun m -> m.test_value) |> List.fold_left ( * ) 1
+  in
+
   let simulate_monkey monkey items =
     (* Turn item into a tuple of (next monkey, new value) *)
     let handle_item item =
       (* Printf.printf "Handle %d\n" item; *)
-      let new_value = item |> monkey.operation |> fun x -> x / 3 in
+      let new_value =
+        item |> monkey.operation |> fun x ->
+        x / divisor |> fun x -> x mod least_common_multiple
+      in
       let dest =
-        if monkey.test new_value then monkey.true_dest else monkey.false_dest
+        if is_divisible monkey.test_value new_value then monkey.true_dest
+        else monkey.false_dest
       in
       (* Printf.printf "%d goes to %d\n" new_value dest; *)
       (dest, new_value)
@@ -99,8 +105,8 @@ let simulate_monkeys rounds monkeys =
   in
 
   let rec simulate_rounds index items inspections =
-    Printf.printf "Round %d\n" index;
-    items |> List.map Shared.Index.to_string |> print_string_list;
+    (* Printf.printf "Round %d\n" index;
+       items |> List.map Shared.Index.to_string |> print_string_list; *)
     if index = 0 then inspections
     else
       let new_items, added_inspections =
@@ -128,12 +134,12 @@ let simulate_monkeys rounds monkeys =
 let solve1 input =
   input
   |> Str.split (Str.regexp "\n\n")
-  |> List.map parse_monkey |> simulate_monkeys 20
+  |> List.map parse_monkey |> simulate_monkeys 20 3
 
 let solve2 input =
   input
   |> Str.split (Str.regexp "\n\n")
-  |> List.map parse_monkey |> simulate_monkeys 10
+  |> List.map parse_monkey |> simulate_monkeys 10000 1
 (* kleinstes gemeinsames Vielfaches *)
 
 let _ =
