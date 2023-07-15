@@ -101,4 +101,5 @@ module Index = struct
   let flat_init a b = init a b |> List.flatten
   let to_string (x, y) = Printf.sprintf "(%d, %d) " x y
   let print index = index |> to_string |> print_string
+  let neighbours (x, y) = [ (x + 1, y); (x - 1, y); (x, y + 1); (x, y - 1) ]
 end
