@@ -30,3 +30,6 @@ _opam/
 
 # Day data
 *.data
+
+# IDE files
+.vscode
