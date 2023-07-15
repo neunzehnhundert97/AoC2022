@@ -85,10 +85,17 @@ let identity x = x
 
 let const x _ = x
 
+(** Return the last element of an [list].
+    When the list is empty, raise an exeption. *)
 let rec last = function
   | [ x ] -> x
   | _ :: xs -> last xs
   | _ -> failwith "Empty list"
+
+(** For a [func] with two argument, swap the position of the arguments. *)
+let swap2 func x y = func y x
+
+let ( -..> ) = swap2
 
 module Index = struct
   type t = int * int

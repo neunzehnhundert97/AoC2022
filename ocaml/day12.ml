@@ -32,30 +32,21 @@ let find_start_and_stop (array : char array array) =
   | ('E', x1, y1) :: ('S', x2, y2) :: _ -> ((x2, y2), (x1, y1))
   | l -> failwith (Printf.sprintf "Illegal result %d" (List.length l))
 
-let dijkstra array =
+(** Use Dijkstra's banker's algorithm to find the shortest path to all
+    position from the highest point [stop].
+    Return a mapping from index to distance. *)
+let dijkstra array stop =
   let x_dim, y_dim = array_dims array in
-  let start, stop = find_start_and_stop array in
-  Printf.printf "Start: %s Stop: %s in %dx%d\n" (Index.to_string start)
-    (Index.to_string stop) x_dim y_dim;
-
   let valid_neighbours (x, y) =
     let height = array.(x).(y) |> transform_to_height in
     (x, y) |> Index.neighbours
     |> List.filter (fun (x, y) ->
            x >= 0 && y >= 0 && x < x_dim && y < y_dim
-           && transform_to_height array.(x).(y) - 1 <= height)
+           && transform_to_height array.(x).(y) >= height - 1)
   in
 
   let rec traverse result_map = function
     | (visited, index) :: rest -> (
-        (* Printf.printf "Position %s Visit: %d Value:%d \n"
-           (Index.to_string index) visited
-           (IndexMap.find_opt index result_map |> Option.value ~default:0); *)
-        (* if List.length rest mod 4 = 0 then
-           Printf.printf "Coverage %f\n"
-             (float_of_int (IndexMap.cardinal result_map)
-             /. (float_of_int x_dim *. float_of_int y_dim)
-             *. 100.); *)
         match IndexMap.find_opt index result_map with
         | Some value when value <= visited -> traverse result_map rest
         | _ ->
@@ -66,14 +57,22 @@ let dijkstra array =
     | [] -> result_map
   in
 
-  let result = traverse IndexMap.empty [ (0, start) ] in
+  traverse IndexMap.empty [ (0, stop) ]
 
-  IndexMap.iter
-    (fun x y -> Printf.printf "%s -> %d\n" (Index.to_string x) y)
-    result;
+let solve1 input =
+  let array = input |> parse_input in
+  let start, stop = find_start_and_stop array in
+  let distance_map = dijkstra array stop in
+  IndexMap.find start distance_map
 
-  IndexMap.find stop result
+let solve2 input =
+  let array = input |> parse_input in
+  let _, stop = find_start_and_stop array in
+  let distance_map = dijkstra array stop in
+  let x_dim, y_dim = array_dims array in
+  Index.flat_init x_dim y_dim
+  |> List.filter (fun (x, y) -> array.(x).(y) = 'a')
+  |> List.filter_map (IndexMap.find_opt -..> distance_map)
+  |> List.sort Int.compare |> List.hd
 
-let solve1 input = input |> parse_input |> dijkstra
-let solve2 input = List.length input
-let _ = do_day 12 solve1 solve2 read_file_to_string_list string_of_int 31 0
+let _ = do_day 12 solve1 solve2 read_file_to_string_list string_of_int 31 29
