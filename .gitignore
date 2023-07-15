@@ -31,5 +31,10 @@ _opam/
 # Day data
 *.data
 
+# Scala stuff
+.metals
+.scala-build
+.bsp
+
 # IDE files
 .vscode
