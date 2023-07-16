@@ -63,6 +63,25 @@ let solve1 input =
   |> List.filter_map (fun x -> if snd x = -1 then Some (fst x) else None)
   |> sum
 
-let _ = do_day 13 solve1 solve1 read_file_to_string string_of_int 13 0
+let solve2 input =
+  Package.(
+    let divider_packet_a = Lst [ Lst [ Number 2 ] ] in
+    let divider_packet_b = Lst [ Lst [ Number 6 ] ] in
+    let prepend a list = a :: list in
+    input
+    |> Str.split (Str.regexp "\n")
+    |> List.filter (fun x -> String.length x > 0)
+    |> List.map parse |> prepend divider_packet_a |> prepend divider_packet_b
+    |> List.sort compare
+    |> List.mapi (fun x y -> (x + 1, y))
+    |> List.filter_map (function
+         | x, elem when elem = divider_packet_a -> Some x
+         | x, elem when elem = divider_packet_b -> Some x
+         | _ -> None)
+    |> function
+    | a :: b :: _ -> a * b
+    | _ -> failwith "Something went wrong")
+
+let _ = do_day 13 solve1 solve2 read_file_to_string string_of_int 13 140
 
 (* let _ = Package.("[1,2,3,[],[[1],2]]" |> parse |> to_string) |> print_endline *)
