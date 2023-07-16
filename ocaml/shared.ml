@@ -97,6 +97,10 @@ let swap2 func x y = func y x
 
 let ( -..> ) = swap2
 
+(** Like [fold_left], but taking the first element as initial value.
+    Raises an exception if the list is empty. *)
+let reduce func list = List.fold_left func (List.hd list) (List.tl list)
+
 module Index = struct
   type t = int * int
 
