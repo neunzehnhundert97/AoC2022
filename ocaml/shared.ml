@@ -113,4 +113,14 @@ module Index = struct
   let to_string (x, y) = Printf.sprintf "(%d, %d) " x y
   let print index = index |> to_string |> print_string
   let neighbours (x, y) = [ (x + 1, y); (x - 1, y); (x, y + 1); (x, y - 1) ]
+
+  let points_in_range a b =
+    match (a, b) with
+    | (x1, y1), (x2, y2) when x1 = x2 ->
+        let small_y, big_y = (min y1 y2, max y1 y2) in
+        List.init (big_y - small_y + 1) (fun y -> (x1, y + small_y))
+    | (x1, y1), (x2, y2) when y1 = y2 ->
+        let small_x, big_x = (min x1 x2, max x1 x2) in
+        List.init (big_x - small_x + 1) (fun x -> (x + small_x, y1))
+    | _ -> failwith "Points must be on a straight line"
 end
