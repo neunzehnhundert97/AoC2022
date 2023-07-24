@@ -77,6 +77,11 @@
  (modules day15)
  (libraries str shared))
 
+(executable
+ (name day16)
+ (modules day16)
+ (libraries str shared))
+
 (env
  (dev
   (flags ; ignore warnings about unused functions and values

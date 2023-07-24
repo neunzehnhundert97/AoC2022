@@ -62,8 +62,6 @@ let count_covered_in_line line_num count_beacon max_value pair_list =
 
   scanner_and_distance |> List.map snd |> List.iter (Printf.printf "%d\n");
 
-  exit 0;
-
   scan_line |> List.filter in_range
 
 let successor (x, y) dim_max = if y = dim_max then (x + 1, 0) else (x, y + 1)
