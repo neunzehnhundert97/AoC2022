@@ -101,6 +101,13 @@ let ( -..> ) = swap2
     Raises an exception if the list is empty. *)
 let reduce func list = List.fold_left func (List.hd list) (List.tl list)
 
+let tuple f (x, y) = f x y
+
+let list_max list =
+  let rec inner acc = function x :: xs -> inner (max x acc) xs | [] -> acc in
+  inner (List.hd list) (List.tl list)
+
+(** Module for an index, which is a two dimensional point. *)
 module Index = struct
   type t = int * int
 
@@ -114,6 +121,9 @@ module Index = struct
   let print index = index |> to_string |> print_string
   let neighbours (x, y) = [ (x + 1, y); (x - 1, y); (x, y + 1); (x, y - 1) ]
 
+  let diag_neighbours (x, y) =
+    [ (x + 1, y + 1); (x - 1, y - 1); (x - 1, y + 1); (x + 1, y - 1) ]
+
   let points_in_range a b =
     match (a, b) with
     | (x1, y1), (x2, y2) when x1 = x2 ->
@@ -123,4 +133,9 @@ module Index = struct
         let small_x, big_x = (min x1 x2, max x1 x2) in
         List.init (big_x - small_x + 1) (fun x -> (x + small_x, y1))
     | _ -> failwith "Points must be on a straight line"
+
+  let manhattan_distance (x1, y1) (x2, y2) =
+    Int.abs (x1 - x2) + Int.abs (y1 - y2)
 end
+
+module IndexSet = Set.Make (Index)
